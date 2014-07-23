@@ -1,10 +1,12 @@
 __author__ = 'andrey'
 import sqlite3
+import settings
+
 
 print("Hello World!")
 
 #connect db
-conn = sqlite3.connect('main.db')
+conn = sqlite3.connect(settings.path + '/main.db')
 #sql
 sql = "SELECT * FROM Chats LIMIT 10"
 
