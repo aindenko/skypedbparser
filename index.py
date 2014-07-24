@@ -8,22 +8,15 @@ cfgfile = 'my.ini'
 config = configparser.RawConfigParser()
 config.read(cfgfile)
 
+#get params
 path = config.get('system', 'path')
 chat = config.get('system', 'chat')
-ts = config.get('system', 'ts')
-
-#store last ts
-#config.set('system', 'ts',lastts)
-
+ts = config.getint('system', 'ts')
+msgid = config.getint('system', 'msgid')
 
 logging.basicConfig(filename='my.log',filemode='a',level=logging.DEBUG)
 logging.debug('///////////////////////////////////////////////');
 logging.debug('Parser started');
-
-
-from os.path import expanduser
-home = expanduser("~")
-logging.debug('Home dir is '+home);
 
 
 #connect db
@@ -34,18 +27,18 @@ logging.debug(sql)
 #execute
 res = conn.execute(sql,[chat])
 lastactts = res.fetchall()[0][0]
-
+# check that ts was changes
 if lastactts > ts :
-    sql = "SELECT * FROM Messages WHERE chatname= ? ORDER by id desc LIMIT 20"
+    sql = "SELECT * FROM Messages WHERE chatname = ? AND id > ? ORDER by id desc LIMIT 20"
     logging.debug(sql)
     #execute
-    res = conn.execute(sql,[chat])
-    logging.debug(res.fetchall())
+    res = conn.execute(sql,[chat,msgid])
+    msgs = res.fetchall()
+    logging.debug(msgs)
+    #set last message id
+    config.set('system', 'msgid',msgs[0][0])
+    config.set('system', 'ts', lastactts)
 
-
-
-
-
-#config save
-with open('my.ini', 'w') as configfile:
-    config.write(configfile)
+    #config save
+    with open(cfgfile, 'w') as configfile:
+        config.write(configfile)
