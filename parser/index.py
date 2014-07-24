@@ -2,6 +2,10 @@ __author__ = 'andrey'
 import sqlite3
 import configparser
 import logging
+import os
+os.chdir(os.path.dirname(__file__))
+print(os.getcwd())
+
 
 cfgfile = 'my.ini'
 #config load
