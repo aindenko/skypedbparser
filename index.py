@@ -1,9 +1,10 @@
 __author__ = 'andrey'
 import sqlite3
 import settings
+import configparser
+import logging
 
 
-print("Hello World!")
 
 from os.path import expanduser
 home = expanduser("~")
@@ -24,3 +25,17 @@ sql = "SELECT * FROM Messages WHERE chatname='"+settings.chat+"' ORDER by id des
 res = conn.execute(sql)
 print(res.fetchall())
 print(home)
+
+
+config = configparser.RawConfigParser()
+config.read('my.ini')
+
+path = config.get('system', 'path')
+chat = config.get('system', 'chat')
+
+#config.add_section('system')
+my = config.set('system', 'my',3)
+
+print(path)
+with open('my.ini', 'w') as configfile:
+    config.write(configfile)
